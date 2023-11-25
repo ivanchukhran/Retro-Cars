@@ -1,0 +1,20 @@
+@model List<RetroCarsWebApp.Models.Car>
+
+@{
+    ViewData["Title"] = "Add Car to Store";
+}
+
+<h2>Add Car to Store</h2>
+
+<form asp-action="Add" asp-controller="Store" method="post">
+    <div class="form-group">
+        <label for="carId">Select Car:</label>
+        <select id="carId" name="carId">
+            @foreach (var car in Model)
+            {
+                <option value="@car.Id">@car.Model @car.Mark</option>
+            }
+        </select>
+    </div>
+    <input type="submit" value="Add Car to Store">
+</form>

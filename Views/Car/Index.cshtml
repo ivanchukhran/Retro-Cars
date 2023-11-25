@@ -1,0 +1,45 @@
+@{
+    ViewData["Title"] = "Main Page";
+}
+
+<div>
+    <h2>Retro Cars</h2>
+    <div id="cars">
+        @foreach (var car in Model)
+        {
+            <p>@car.Model @car.Mark: @car.CarClass</p>
+        }
+    </div>
+    <button id="loadMore">Load More</button>
+    @Html.ActionLink("Add Car", "Create", "Car", null, new { @class = "btn btn-primary" })
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+var page = 1;
+var pageSize = 10;
+
+$(document).ready(function() {
+    $('#loadMore').click(function() {
+        page++;
+        loadCars();
+    });
+});
+
+function loadCars() {
+    $.ajax({
+        url: '../api/Car/GetCars',
+        type: 'GET',
+        data: { page: page, pageSize: pageSize },
+        success: function(result) {
+            // Append the cars to the #cars div
+            $('#cars').append(result);
+        },
+        error: function(result) {
+            // Handle error
+            alert("Error in loading cars");
+            console.log(result)
+        }
+    });
+}
+</script>
