@@ -1,70 +1,51 @@
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using System;
-using System.Security.Cryptography;
-using MongoDB.Driver;
-using RetroCarsWebApp.Data;
+using NuGet.Protocol;
 using RetroCarsWebApp.Models;
 
 namespace RetroCarsWebApp.Services;
 
 public class CarService
 {
-    private readonly IMongoCollection<Car> _cars;
+    private readonly String _filePath;
 
-    public CarService(string connectionString, string dbName)
+    public CarService(string filePath)
     {
-        var client = new MongoDbContext(connectionString, dbName);
-        _cars = client.GetCollection<Car>("Cars");
+        _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
     }
 
+    public List<Car> GetCars()
+    {
+        var jsonString = FileInteractor.ReadAsync(_filePath).Result;
+        if (string.IsNullOrEmpty(jsonString))
+        {
+            FileInteractor.WriteAsync(_filePath, "[]").Wait();
+            jsonString = FileInteractor.ReadAsync(_filePath).Result;
+        }
+        return jsonString.FromJson<List<Car>>();
+    }
+    
     public Car CreateCar(Car car)
     {
-        _cars.InsertOne(car);
+        car.Id = Guid.NewGuid().ToString();
+        FileInteractor.WriteAsync(_filePath, GetCars().Append(car).ToJson()).Wait();
         return car;
     }
     
     public IEnumerable<Car> GetUserCars(string userId) =>
-        new List<Car>(_cars.FindAsync(car => car.OwnerId == userId).Result.ToList());
-
-    public IEnumerable<Car> GetUserCarsPaginated(string userId, int page, int pageSize = 10)
-    {
-        if (page < 1) page = 1;
-        return new List<Car>(
-            _cars.Find(car => car.OwnerId == userId)
-            .Skip((page - 1) * pageSize)
-            .Limit(pageSize)
-            .ToList());
-    }
+        new List<Car>(GetCars().Where(car => car.OwnerId == userId).ToList());
+    
     
     public IEnumerable<Car> GetStoreCars(string userId) => 
-        new List<Car>(_cars.FindAsync(car => car.OwnerId != userId).Result.ToList());
-
-    public IEnumerable<Car> GetStoreCarsPaginated(int page = 1, int pageSize = 10) =>
-        new List<Car>(_cars.Find(car => car.IsAvailableOnStore == true)
-            .Skip((page - 1) * pageSize)
-            .Limit(pageSize)
-            .ToList()
-        );
+        GetCars().Where(car => car.OwnerId != userId && car.IsAvailableOnStore).ToList();
 
     public Car? GetCar(string id) =>
-        _cars.FindAsync(car => car.Id == id).Result.FirstOrDefault();
+        GetCars().FirstOrDefault(car => car.Id == id);
 
     public void UpdateCar(Car car) =>
-        _cars.ReplaceOneAsync(c => c.Id == car.Id, car).Wait();
+        FileInteractor
+            .WriteAsync(_filePath, GetCars().Select(c => c.Id == car.Id ? car : c).ToJson())
+            .Wait();
 
     public void DeleteCar(string id) =>
-        _cars.DeleteOneAsync(car => car.Id == id).Wait();
-
-    public IEnumerable<Car> GetCars() =>
-        new List<Car>(_cars.FindAsync(car => true).Result.ToList());
-
-    public IEnumerable<Car> GetCars(int page, int pageSize)
-    {
-        if (page < 1)
-        {
-            Console.WriteLine("Page number cannot be less than 1: {0}", page);
-            page = 1;
-        }
-        return new List<Car>(_cars.Find(car => true).Skip((page - 1) * pageSize).Limit(pageSize).ToList());
-    }
+        FileInteractor.WriteAsync(_filePath, GetCars().Where(car => car.Id != id).ToJson()).Wait();
+    
 }

@@ -2,45 +2,59 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
 using System.Security.Cryptography;
 using MongoDB.Driver;
-using RetroCarsWebApp.Data;
+using NuGet.Protocol;
 using RetroCarsWebApp.Models;
 
 namespace RetroCarsWebApp.Services;
 
-public class UserService 
+public class UserService
 {
-    private readonly IMongoCollection<User> _users;
+    private readonly String _filePath;
 
-    public UserService(string connectionString, string dbName)
+    public UserService(string filePath)
     {
-        var client = new MongoDbContext(connectionString, dbName);
-        _users = client.GetCollection<User>("Users");
+        _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
+    }
+
+    public List<User> GetUsers()
+    {
+        var jsonString = FileInteractor.ReadAsync(_filePath).Result;
+        if (string.IsNullOrEmpty(jsonString))
+        {
+            FileInteractor.WriteAsync(_filePath, "[]").Wait();
+            jsonString = FileInteractor.ReadAsync(_filePath).Result;
+        }
+        return jsonString.FromJson<List<User>>();
     }
 
     public User CreateUser(User user)
     {
+        user.Id = Guid.NewGuid().ToString();
         user.Password = HashPassword(user.Password);
-        _users.InsertOne(user);
+        FileInteractor.WriteAsync(_filePath, GetUsers().Append(user).ToJson()).Wait();
         return user;
     }
 
-    public User? GetUser(string id) => 
-        _users.FindAsync(user => user.Id == id).Result.FirstOrDefault();
-    
-    public User? GetUserByUsernameAndPassword(string username, string password) => 
-        _users.FindAsync(user => user.Username == username && user.Password == password).Result.FirstOrDefault();
+    public User? GetUser(string id) =>
+        GetUsers().FirstOrDefault(user => user.Id == id);
 
-    public User? GetUserByEmail(string userEmail) => 
-        _users.FindAsync(u => u.Email == userEmail).Result.FirstOrDefault();
+    public User? GetUserByUsernameAndPassword(string username, string password) =>
+        GetUsers().FirstOrDefault(u => u.Username == username && u.Password == password);
 
-    public User? GetUserByUsername(string username) => 
-        _users.FindAsync(user => user.Username == username).Result.FirstOrDefault();
+    public User? GetUserByEmail(string userEmail) =>
+        GetUsers().FirstOrDefault(u => u.Email == userEmail);
+
+    public User? GetUserByUsername(string username) =>
+        GetUsers().FirstOrDefault(u => u.Username == username);
 
     public void UpdateUser(User user) => 
-        _users.ReplaceOneAsync(u => u.Id == user.Id, user).Wait();
+        FileInteractor
+            .WriteAsync(_filePath, GetUsers().Select(u => u.Id == user.Id ? user : u).ToJson())
+            .Wait();
 
     public void DeleteUser(string id) => 
-        _users.DeleteOneAsync(user => user.Id == id).Wait();
+        FileInteractor.WriteAsync(_filePath, GetUsers().Where(user => user.Id != id).ToJson()).Wait();
+
 
     public string HashPassword(string password)
     {
@@ -49,13 +63,14 @@ public class UserService
         {
             rng.GetBytes(salt);
         }
+
         string hashed = Convert.ToBase64String(
             KeyDerivation.Pbkdf2(
-            password: password,
-            salt: salt,
-            prf: KeyDerivationPrf.HMACSHA1,
-            iterationCount: 10000,
-            numBytesRequested: 256 / 8)
+                password: password,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA1,
+                iterationCount: 10000,
+                numBytesRequested: 256 / 8)
         );
         return $"{Convert.ToBase64String(salt)}:{hashed}";
     }
@@ -67,11 +82,11 @@ public class UserService
         var hash = parts[1];
         string hashed = Convert.ToBase64String(
             KeyDerivation.Pbkdf2(
-            password: password,
-            salt: salt,
-            prf: KeyDerivationPrf.HMACSHA1,
-            iterationCount: 10000,
-            numBytesRequested: 256 / 8)
+                password: password,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA1,
+                iterationCount: 10000,
+                numBytesRequested: 256 / 8)
         );
         return hash == hashed;
     }

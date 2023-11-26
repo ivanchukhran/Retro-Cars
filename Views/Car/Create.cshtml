@@ -6,88 +6,88 @@
 
 <h2>Add Car</h2>
 
-<form asp-action="CreateCar" asp-controller="Car" method="post">
-    <div class="row">
-        <div class="col">
-            <div class="form-group">
-                <label for="model">Model:</label>
-                <input type="text" id="model" name="Model" required>
-            </div>
-            <div class="form-group">
-                <label for="mark">Mark:</label>
-                <input type="text" id="mark" name="Mark" required>
-            </div>
-            <div class="form-group">
-                <label id="year">Year:</label>
-                <input id="yearRange" type="range" min="1930" max="2023" id="year" onload="updateTextInput()" oninput="updateTextInput();" name="Year" required>
-            </div>
-            <div class="form-group">
-                <label for="buying">Buying:</label>
-                <select id="buying" name="BuyingPrice" required>
-                    <option value="vhigh">Very High</option>
-                    <option value="high">High</option>
-                    <option value="med">Medium</option>
-                    <option value="low">Low</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="maint">Maintenance:</label>
-                <select id="maint" name="MaintenanceCost" required>
-                    <option value="vhigh">Very High</option>
-                    <option value="high">High</option>
-                    <option value="med">Medium</option>
-                    <option value="low">Low</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="doors">Doors:</label>
-                <select id="doors" name="NumberOfDoors" required>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5more">5 or more</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="persons">Persons:</label>
-                <select id="persons" name="NumberOfSeats" required>
-                    <option value="2">2</option>
-                    <option value="4">4</option>
-                    <option value="more">More</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="lug_boot">Luggage Boot:</label>
-                <select id="lug_boot" name="LuggageCapacity" required>
-                    <option value="small">Small</option>
-                    <option value="med">Medium</option>
-                    <option value="big">Big</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="safety">Safety:</label>
-                <select id="safety" name="SafetyRating" required>
-                    <option value="low">Low</option>
-                    <option value="med">Medium</option>
-                    <option value="high">High</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="classLabel">Class Label:</label >
-                <select id="classLabel" name="CarClass" required>
-                    <option value="unacc">Unacceptable</option>
-                    <option value="acc">Acceptable</option>
-                    <option value="good">Good</option>
-                    <option value="vgood">Very Good</option>
-                </select>
-            </div>
-
-        </div>
-    </div>
-    <input type="submit" value="Add Car">
-    <input type="reset" value="Cancel" onclick="cancel()"/>
-</form>
+@* <form asp-action="CreateCar" asp-controller="Car" method="post"> *@
+@*     <div class="row"> *@
+@*         <div class="col"> *@
+@*             <div class="form-group"> *@
+@*                 <label for="model">Model:</label> *@
+@*                 <input type="text" id="model" name="Model" required> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label for="mark">Mark:</label> *@
+@*                 <input type="text" id="mark" name="Mark" required> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label id="year">Year:</label> *@
+@*                 <input id="yearRange" type="range" min="1930" max="2023" id="year" onload="updateTextInput()" oninput="updateTextInput();" name="Year" required> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label for="buying">Buying:</label> *@
+@*                 <select id="buying" name="BuyingPrice" required> *@
+@*                     <option value="vhigh">Very High</option> *@
+@*                     <option value="high">High</option> *@
+@*                     <option value="med">Medium</option> *@
+@*                     <option value="low">Low</option> *@
+@*                 </select> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label for="maint">Maintenance:</label> *@
+@*                 <select id="maint" name="MaintenanceCost" required> *@
+@*                     <option value="vhigh">Very High</option> *@
+@*                     <option value="high">High</option> *@
+@*                     <option value="med">Medium</option> *@
+@*                     <option value="low">Low</option> *@
+@*                 </select> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label for="doors">Doors:</label> *@
+@*                 <select id="doors" name="NumberOfDoors" required> *@
+@*                     <option value="2">2</option> *@
+@*                     <option value="3">3</option> *@
+@*                     <option value="4">4</option> *@
+@*                     <option value="5more">5 or more</option> *@
+@*                 </select> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label for="persons">Persons:</label> *@
+@*                 <select id="persons" name="NumberOfSeats" required> *@
+@*                     <option value="2">2</option> *@
+@*                     <option value="4">4</option> *@
+@*                     <option value="more">More</option> *@
+@*                 </select> *@
+@*             </div> *@
+@* *@
+@*             <div class="form-group"> *@
+@*                 <label for="lug_boot">Luggage Boot:</label> *@
+@*                 <select id="lug_boot" name="LuggageCapacity" required> *@
+@*                     <option value="small">Small</option> *@
+@*                     <option value="med">Medium</option> *@
+@*                     <option value="big">Big</option> *@
+@*                 </select> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label for="safety">Safety:</label> *@
+@*                 <select id="safety" name="SafetyRating" required> *@
+@*                     <option value="low">Low</option> *@
+@*                     <option value="med">Medium</option> *@
+@*                     <option value="high">High</option> *@
+@*                 </select> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label for="classLabel">Class Label:</label > *@
+@*                 <select id="classLabel" name="CarClass" required> *@
+@*                     <option value="unacc">Unacceptable</option> *@
+@*                     <option value="acc">Acceptable</option> *@
+@*                     <option value="good">Good</option> *@
+@*                     <option value="vgood">Very Good</option> *@
+@*                 </select> *@
+@*             </div> *@
+@* *@
+@*         </div> *@
+@*     </div> *@
+@*     <input type="submit" value="Add Car"> *@
+@*     <input type="reset" value="Cancel" onclick="cancel()"/> *@
+@* </form> *@
 <script>
     function cancel() {
         window.location.href = "/api/Car";

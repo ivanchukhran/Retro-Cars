@@ -1,4 +1,3 @@
-
 @{
     ViewData["Title"] = "Store";
 }
@@ -6,4 +5,35 @@
 <h2>Available Cars</h2>
 
 <div>
+    <div id="accordion">
+        @foreach (var car in Model)
+        {
+            var viewData = new ViewDataDictionary(
+                new Microsoft.AspNetCore.Mvc.ModelBinding.EmptyModelMetadataProvider(), 
+                new Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary()
+                )
+            {
+                { "ShowBuyButton", true }
+            };
+            @await Html.PartialAsync("_CarPartial", car, viewData)
+        }
+    </div>
+    <button id="loadMore">Load More</button>
+    @Html.ActionLink("Add Car", "Create", "Car", null, new { @class = "btn btn-primary" })
+</div>
+<div class="d-flex justify-content-center">
+    <ul class="pagination">
+        <li class="page-item @(Model.PageIndex == 1 ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Index", new { pageNumber = Model.PageIndex - 1 })">Previous</a>
+        </li>
+        @for (var i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { pageNumber = i })">@i</a>
+            </li>
+        }
+        <li class="page-item @(Model.PageIndex == Model.TotalPages ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Index", new { pageNumber = Model.PageIndex + 1 })">Next</a>
+        </li>
+    </ul>
 </div>

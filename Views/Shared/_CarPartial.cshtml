@@ -1,0 +1,33 @@
+@model RetroCarsWebApp.Models.Car
+@{
+    bool showBuyButton = ViewBag.ShowBuyButton;
+}
+
+<div class="card">
+    <div class="card-header" id="heading-@Model.Id">
+        <h2 class="mb-0">
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-@Model.Id" aria-expanded="true" aria-controls="collapse-@Model.Id">
+                @Model.Mark @Model.Model (@Model.Year)
+            </button>
+        </h2>
+    </div>
+
+    <div id="collapse-@Model.Id" class="collapse" aria-labelledby="heading-@Model.Id" data-parent="#accordion">
+        <div class="card-body">
+            <p>Number of Seats: @Model.NumberOfSeats</p>
+            <p>Number of Doors: @Model.NumberOfDoors</p>
+            <p>Buying Price: @Model.BuyingPrice</p>
+            <p>Maintenance Cost: @Model.MaintenanceCost</p>
+            <p>Luggage Capacity: @Model.LuggageCapacity</p>
+            <p>Safety Rating: @Model.SafetyRating</p>
+            <p>Car Class: @Model.CarClass</p>
+        </div>
+    </div>
+
+    @if (showBuyButton)
+    {
+        <div class="card-footer">
+            <button class="btn btn-primary">Buy</button>
+        </div>
+    }
+</div>

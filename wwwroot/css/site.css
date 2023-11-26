@@ -20,3 +20,8 @@ html {
 body {
     margin-bottom: 60px;
 }
+
+.car-list {
+    width: 50%; /* or any other percentage or fixed value you prefer */
+    margin: auto;
+}

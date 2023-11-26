@@ -1,19 +1,24 @@
 using RetroCarsWebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-const string connectionString = "mongodb://root:example@localhost:27017";
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<UserService>(
-    new UserService(connectionString, "Users")
-    );
-builder.Services.AddSingleton<CarService>(
-    new CarService(connectionString, "Cars")
-    );
-builder.Services.AddSingleton<SessionService>(
-    new SessionService(connectionString, "Sessions")
-    );
+builder.Services.AddSingleton(
+    new UserService("Users.json")
+);
+builder.Services.AddSingleton(
+    new CarService("Cars.json")
+);
+
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(option =>
+    {
+        option.IdleTimeout = TimeSpan.FromMinutes(30);
+        option.Cookie.Name = ".RetroCars.Session";
+    }
+);
 
 var app = builder.Build();
 
@@ -28,9 +33,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseSession();
 app.UseRouting();
 
-app.UseAuthorization();
 
 app.MapControllerRoute(
     "default",

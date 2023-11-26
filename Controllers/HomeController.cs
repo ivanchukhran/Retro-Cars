@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using RetroCarsWebApp.Models;
@@ -9,20 +10,18 @@ namespace RetroCarsWebApp.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly SessionService _sessionService;
 
-    public HomeController(ILogger<HomeController> logger, SessionService sessionService)
+    public HomeController(ILogger<HomeController> logger)
     {
         _logger = logger;
-        _sessionService = sessionService;
     }
 
     public IActionResult Index()
     {
-        var currentTimestamp = DateTime.Now;
-        var lastActiveSession = _sessionService.GetLastActiveSession(currentTimestamp);
-        if (lastActiveSession == null) return View();
-        Response.Cookies.Append("sessionId", lastActiveSession.Id);
+        if (!HttpContext.Session.Keys.Contains("userId"))
+        {
+            return View();
+        }
         return RedirectToAction("Index", "Car");
     }
 

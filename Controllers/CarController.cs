@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using RetroCarsWebApp.Models;
 using RetroCarsWebApp.Services;
@@ -8,46 +9,83 @@ namespace RetroCarsWebApp.Controllers;
 public class CarController : Controller
 {
     private readonly CarService _carService;
-    private readonly SessionService _sessionService;
     
-    public CarController(CarService carService, SessionService sessionService)
+    public CarController(CarService carService)
     {
         _carService = carService;
-        _sessionService = sessionService;
     }
     
     [HttpGet]
-    public IActionResult Index(int page = 1, int pageSize = 10)
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
     {
-        var session = _sessionService.GetSession(Request.Cookies["sessionId"]);
-        if (session == null) return Unauthorized("You are not logged in!");
-        return View(_carService.GetUserCarsPaginated(session.UserId, page, pageSize));
-    }
-
-    [HttpGet("GetUserCars")]
-    public IActionResult GetUserCars()
-    {
-        var session = _sessionService.GetSession(Request.Cookies["sessionId"]);
-        if (session == null) return Unauthorized("You are not logged in!");
-        return Ok(_carService.GetUserCarsPaginated(session.UserId, 1, 10));
+        var userId = HttpContext.Session.Keys.Contains("userId") ? 
+            HttpContext.Session.GetString("userId") : 
+            null;
+        if (userId == null) return Unauthorized("You are not logged in!");
+        // var userCars = _carService.GetUserCarsPaginated(userId, 1, 10);
+        var userCars = _carService.GetUserCars(userId).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        return View(new PaginatedList<Car>(userCars, userCars.Count, page, pageSize));
     }
     
+    // [HttpGet("GetUserCars")]
+    // public IActionResult GetUserCars()
+    // {
+    //     var userId = HttpContext.Session.Keys.Contains("userId") ? 
+    //         HttpContext.Session.GetString("userId") : 
+    //         null;
+    //     return userId == null ? 
+    //         Unauthorized("You are not logged in!") : 
+    //         Ok(_carService.GetUserCars(userId));
+    // }
+
     [HttpGet("GetCars")]
     public IActionResult GetCars(int page = 1, int pageSize = 10)
     {
-        return Ok(_carService.GetCars(page, pageSize));
+        if (page < 1) page = 1;
+        var userId = HttpContext.Session.Keys.Contains("userId") ? 
+            HttpContext.Session.GetString("userId") : 
+            null;
+        return userId == null ? 
+            Unauthorized("You are not logged in!") : 
+            Ok(_carService.GetUserCars(userId).Skip((page - 1) * pageSize).Take(pageSize));
     }
-    
+
     [HttpPost("CreateCar")]
     public IActionResult CreateCar(Car car)
     {
-        var session = _sessionService.GetSession(Request.Cookies["sessionId"]);
-        if (session == null) return Unauthorized("You are not logged in!");
-        car.OwnerId = session.UserId;
+        var userId = HttpContext.Session.Keys.Contains("userId") ? 
+            HttpContext.Session.GetString("userId") : 
+            null;
+        if (userId == null) return Unauthorized("You are not logged in!");
+        car.OwnerId = userId;
         _carService.CreateCar(car);
         return RedirectToAction("Index");
     }
     
+    
+    //
+    // [HttpGet("GetCars")]
+    // public IActionResult GetCars(int page = 1, int pageSize = 10)
+    // {
+    //     if (page < 1) page = 1;
+    //     return Ok(_carService.GetCarsPaginated(page, pageSize));
+    // }
+    //
+    // [HttpPost("CreateCar")]
+    // public IActionResult CreateCar(Car car)
+    // {
+    //     var session = _sessionService.GetSession(Request.Cookies["sessionId"]);
+    //     if (session == null) return Unauthorized("You are not logged in!");
+    //     car.OwnerId = session.UserId;
+    //     _carService.CreateCar(car);
+    //     return RedirectToAction("Index");
+    // }
+    //
+    // [HttpGet("Create")]
+    // public IActionResult Create()
+    // {
+    //     return View();
+    // }
     [HttpGet("Create")]
     public IActionResult Create()
     {

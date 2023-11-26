@@ -1,0 +1,11 @@
+@model IEnumerable<RetroCarsWebApp.Models.Car>
+
+<ul class="car-list">
+    @foreach (var car in Model)
+    {
+        <li>
+            @{ ViewBag.ShowBuyButton = false; }
+            @Html.PartialAsync("_CarPartial", car)
+        </li>
+    }
+</ul>
