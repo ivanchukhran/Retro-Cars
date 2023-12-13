@@ -22,11 +22,10 @@ public class CarController : Controller
             HttpContext.Session.GetString("userId") : 
             null;
         if (userId == null) return Unauthorized("You are not logged in!");
-        // var userCars = _carService.GetUserCarsPaginated(userId, 1, 10);
         var userCars = _carService.GetUserCars(userId).Skip((page - 1) * pageSize).Take(pageSize).ToList();
         return View(new PaginatedList<Car>(userCars, userCars.Count, page, pageSize));
     }
-    
+        
     // [HttpGet("GetUserCars")]
     // public IActionResult GetUserCars()
     // {
@@ -62,30 +61,6 @@ public class CarController : Controller
         return RedirectToAction("Index");
     }
     
-    
-    //
-    // [HttpGet("GetCars")]
-    // public IActionResult GetCars(int page = 1, int pageSize = 10)
-    // {
-    //     if (page < 1) page = 1;
-    //     return Ok(_carService.GetCarsPaginated(page, pageSize));
-    // }
-    //
-    // [HttpPost("CreateCar")]
-    // public IActionResult CreateCar(Car car)
-    // {
-    //     var session = _sessionService.GetSession(Request.Cookies["sessionId"]);
-    //     if (session == null) return Unauthorized("You are not logged in!");
-    //     car.OwnerId = session.UserId;
-    //     _carService.CreateCar(car);
-    //     return RedirectToAction("Index");
-    // }
-    //
-    // [HttpGet("Create")]
-    // public IActionResult Create()
-    // {
-    //     return View();
-    // }
     [HttpGet("Create")]
     public IActionResult Create()
     {

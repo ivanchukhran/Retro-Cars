@@ -4,12 +4,21 @@
 }
 
 <div class="card">
-    <div class="card-header" id="heading-@Model.Id">
-        <h2 class="mb-0">
-            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-@Model.Id" aria-expanded="true" aria-controls="collapse-@Model.Id">
-                @Model.Mark @Model.Model (@Model.Year)
-            </button>
-        </h2>
+    <div class="card-header d-flex" id="heading-@Model.Id">
+        <div class="d-flex  align-items-center" >
+            <h2 class="mb-0">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-@Model.Id" aria-expanded="true" aria-controls="collapse-@Model.Id">
+                    @Model.Mark @Model.Model (@Model.Year)
+                </button>
+            </h2>
+            @if (showBuyButton)
+            {
+                <div class="ml-auto">
+                    <button class="btn btn-primary">Buy</button>
+                </div>
+            }
+        </div>
+
     </div>
 
     <div id="collapse-@Model.Id" class="collapse" aria-labelledby="heading-@Model.Id" data-parent="#accordion">
@@ -23,11 +32,4 @@
             <p>Car Class: @Model.CarClass</p>
         </div>
     </div>
-
-    @if (showBuyButton)
-    {
-        <div class="card-footer">
-            <button class="btn btn-primary">Buy</button>
-        </div>
-    }
 </div>
