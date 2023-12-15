@@ -1,11 +1,11 @@
-@model RetroCarsWebApp.Models.Car
+@model Car
 @{
     bool showBuyButton = ViewBag.ShowBuyButton;
 }
 
 <div class="card">
     <div class="card-header d-flex" id="heading-@Model.Id">
-        <div class="d-flex  align-items-center" >
+        <div class="d-flex  align-items-center">
             <h2 class="mb-0">
                 <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-@Model.Id" aria-expanded="true" aria-controls="collapse-@Model.Id">
                     @Model.Mark @Model.Model (@Model.Year)
@@ -14,7 +14,7 @@
             @if (showBuyButton)
             {
                 <div class="ml-auto">
-                    <button class="btn btn-primary">Buy</button>
+                    <button class="btn btn-primary" onclick="buy('@Model.Id')">Buy</button>
                 </div>
             }
         </div>
@@ -30,6 +30,12 @@
             <p>Luggage Capacity: @Model.LuggageCapacity</p>
             <p>Safety Rating: @Model.SafetyRating</p>
             <p>Car Class: @Model.CarClass</p>
+            @if (Model.IsAvailableOnStore)
+            {
+                <p>On Store <button type="button" class="btn btn-danger" onclick="removeFromStore('@Model.Id')">Remove</button></p>
+            }
         </div>
     </div>
 </div>
+
+<script type="text/javascript" src="js/site.js"></script>

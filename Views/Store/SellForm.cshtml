@@ -1,0 +1,40 @@
+@model List<Car>
+
+@{
+    ViewData["Title"] = "Add Car to Store";
+}
+
+<h2>Add Car to Store</h2>
+
+<form asp-action="SellCar" asp-controller="Store" method="post">
+    <div class="form-group">
+        <label for="carId">Select Car:</label>
+        <select id="carSelection" name="carId" >
+            @foreach (var car in Model)
+            {
+                <option value="@car.Id">@car.Model @car.Mark</option>
+            }
+        </select>
+    </div>
+    <input type="submit" value="Add Car to Store" onclick="addToStore()">
+</form>
+<script>
+    function addToStore() { 
+        const carID = document.getElementById("carSelection").value;
+        console.log(carID);
+        console.log("adding car to store");
+        $.ajax({
+            url: '../../api/Store/SellCar',
+            type: 'POST',
+            data: JSON.stringify(carID),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (data) {
+            },
+            error: function (data) {
+                console.log(data.responseText)
+                // alert("error")
+            }
+        });
+    }
+</script>

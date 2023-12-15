@@ -6,12 +6,13 @@ public class FileInteractor
     {
         if (!File.Exists(path)) File.Create(path).Close();
     }
-    public static Task<String> ReadAsync(string path)
+
+    public static Task<string> ReadAsync(string path)
     {
         CheckOrCreateFile(path);
         return Task.Run(() => File.ReadAllText(path));
     }
-    
+
     public static Task WriteAsync(string path, string content)
     {
         CheckOrCreateFile(path);

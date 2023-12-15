@@ -1,8 +1,10 @@
 using RetroCarsWebApp.Services;
+using Microsoft.ML;
+using RetroCarsWebApp.Classification;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add builder.Services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton(
     new UserService("Users.json")
@@ -19,6 +21,16 @@ builder.Services.AddSession(option =>
         option.Cookie.Name = ".RetroCars.Session";
     }
 );
+
+builder.Services.AddSingleton<MLContext>();
+builder.Services.AddSingleton<CarModelTrainingService>();
+builder.Services.AddSingleton<PredictionService>(provider =>
+{
+    var context = provider.GetService<MLContext>();
+    var carModelTrainingService = provider.GetService<CarModelTrainingService>();
+    var modelPath = "/home/ivan/RiderProjects/CarClassifier/Data/car-model.zip";
+    return new PredictionService(context, carModelTrainingService, modelPath);
+});
 
 var app = builder.Build();
 

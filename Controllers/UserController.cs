@@ -22,21 +22,18 @@ public class UserController : Controller
         var hashedUser = _userService.CreateUser(user) ?? throw new ArgumentException("Unable to create user");
         HttpContext.Session.SetString("userId", hashedUser.Id);
         return RedirectToAction("Index", "Car");
-        
     }
-    
+
     [HttpPost("login")]
     public IActionResult Read(string username, string password)
     {
         var user = _userService.GetUserByUsername(username);
         if (user == null || !_userService.VerifyPassword(password, user.Password))
-        {
             return Unauthorized("Invalid username or password");
-        }
         HttpContext.Session.SetString("userId", user.Id);
         return RedirectToAction("Index", "Car");
     }
-    
+
     //
     // [HttpPut("{id}")]
     // public IActionResult Update(User user)

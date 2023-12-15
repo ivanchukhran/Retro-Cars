@@ -1,6 +1,3 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
 namespace RetroCarsWebApp.Models;
 
 public class Car
@@ -14,8 +11,13 @@ public class Car
     public string? LuggageCapacity { get; set; }
     public string? SafetyRating { get; set; }
     public string? CarClass { get; set; }
-    public int NumberOfDoors { get; set; }
-    public int NumberOfSeats { get; set; }
+    public string? NumberOfDoors { get; set; }
+    public string? NumberOfSeats { get; set; }
     public int Year { get; set; }
     public bool IsAvailableOnStore { get; set; }
+    
+    public override string ToString()
+    {
+        return $"Id: {Id}, OwnerId: {OwnerId}, Model: {Model}, Mark: {Mark}, BuyingPrice: {BuyingPrice}, MaintenanceCost: {MaintenanceCost}, LuggageCapacity: {LuggageCapacity}, SafetyRating: {SafetyRating}, CarClass: {CarClass}, NumberOfDoors: {NumberOfDoors}, NumberOfSeats: {NumberOfSeats}, Year: {Year}, IsAvailableOnStore: {IsAvailableOnStore}";
+    }
 }

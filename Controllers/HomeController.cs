@@ -1,9 +1,6 @@
 ﻿using System.Diagnostics;
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
 using RetroCarsWebApp.Models;
-using RetroCarsWebApp.Services;
 
 namespace RetroCarsWebApp.Controllers;
 
@@ -18,10 +15,7 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        if (!HttpContext.Session.Keys.Contains("userId"))
-        {
-            return View();
-        }
+        if (!HttpContext.Session.Keys.Contains("userId")) return View();
         return RedirectToAction("Index", "Car");
     }
 
